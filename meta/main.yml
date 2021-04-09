@@ -1,0 +1,20 @@
+galaxy_info:
+  author: Red Hat DCI
+  role_name: dci_quay
+  description: Ansible role to setup quay on a system.
+  company: Red Hat
+  issue_tracker_url: https://github.com/redhat-cip/ansible-role-dci-quay/issues
+  license: Apache-2.0
+  min_ansible_version: 2.9
+  platforms:
+    - name: EL
+      versions:
+        - 8
+    - name: EL
+      versions:
+        - 7
+
+  galaxy_tags:
+    - quay
+
+dependencies: []

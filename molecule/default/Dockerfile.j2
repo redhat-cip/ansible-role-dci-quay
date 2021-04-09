@@ -1,0 +1,13 @@
+FROM {{ item.image }}
+
+{% if item.name.endswith("7") %}
+RUN yum install -y sudo libselinux-python && yum clean all
+{% else %}
+RUN yum install -y sudo python3-libselinux && yum clean all
+{% endif %}
+
+
+RUN adduser centos && \
+    echo 'centos ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/90-centos && \
+    chmod 440 /etc/sudoers.d/90-centos
+    

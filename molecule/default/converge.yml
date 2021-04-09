@@ -1,0 +1,13 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Include ansible-role-dci-quay"
+      vars:
+        - redis_server_url: '10.0.0.1'
+        - redis_server_port: '6379'
+        - postgres_database_uri: 'postgresql://dci@10.0.0.1/dci'
+        - host_public_ip: '10.10.0.1'
+      include_role:
+        name: "ansible-role-dci-quay"
+

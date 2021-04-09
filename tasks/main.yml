@@ -1,0 +1,34 @@
+---
+- name: Create Quay config directory
+  file:
+    path: "{{ quay_config_path }}"
+    state: directory
+    mode: '0755'
+  become: true
+
+- name: Create Quay settings file
+  template:
+    src: 'config.yml.j2'
+    dest: "{{ quay_config_path }}/config.yaml"
+    mode: '0644'
+  become: true
+
+- name: Create Quay settings file
+  template:
+    src: 'dci-quay.service.j2'
+    dest: '/lib/systemd/system/dci-quay.service'
+    mode: '0644'
+  become: true
+
+- name: Pull Quay image
+  command: /usr/bin/podman pull {{ quay_image }}
+  become: true
+
+- name: Launch dci-quay service
+  systemd:
+    name: dci-quay
+    enabled: true
+    state: started
+  tags: notest
+  become: true
+...

@@ -1,0 +1,18 @@
+[Unit]
+Description=DCI Quay container
+
+[Service]
+User={{ quay_system_user }}
+Group={{ quay_system_group }}
+Restart=always
+ExecStart=/usr/bin/podman --log-level=debug run \
+                          --rm \
+                          --name {{ quay_container_name }} \
+                          --publish {{ quay_http_port }}:8080 \
+                          --publish {{ quay_https_port }}:4443 \
+                          --volume {{ quay_config_path }}:/quay-registry/conf/stack \
+                          {{ quay_image }}
+ExecStop=/usr/bin/podman stop --name {{ quay_container_name }}
+
+[Install]
+WantedBy=local.target

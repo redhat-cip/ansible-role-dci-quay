@@ -1,0 +1,15 @@
+---
+- name: Verify
+  hosts: all
+  tasks:
+
+  - name: Verify unit and config files are created
+    stat:
+      path: "{{ item }}"
+    register: p
+    failed_when: not p.stat.exists
+    with_items:
+      - /etc/quay/config.yml
+      - /etc/dci/quay_env
+      - /lib/systemd/system/dci-quay.service
+

@@ -1,0 +1,24 @@
+---
+dependency:
+  name: galaxy
+  enabled: false
+
+driver:
+  name: podman
+
+platforms:
+  - name: centos7
+    image: centos:7
+  - name: centos8
+    image: centos:8
+
+lint: yamllint defaults handlers tasks
+
+provisioner:
+  name: ansible
+  log: true
+  lint:
+    name: ansible-lint
+
+verifier:
+  name: ansible
