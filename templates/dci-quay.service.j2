@@ -11,6 +11,9 @@ ExecStart=/usr/bin/podman --log-level=debug run \
                           --publish {{ quay_http_port }}:8080 \
                           --publish {{ quay_https_port }}:4443 \
                           --volume {{ quay_config_path }}:/quay-registry/conf/stack \
+                          {%if not use_swift|default(false) %}
+                          --volume {{ quay_container_storage_path }}:/datastorage/registry \
+                          {% endif %}
                           {{ quay_image }}
 ExecStop=/usr/bin/podman stop --name {{ quay_container_name }}
 

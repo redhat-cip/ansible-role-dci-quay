@@ -46,6 +46,7 @@ Required:
  - quay_config_path: '<QUAY_CONFIG_PATH>'
  - quay_image: '<QUAY_IMAGE>'
  - storage_local_path: '<STORAGE_LOCAL_PATH>'
+ - quay_container_storage_path: '<QUAY_CONTAINER_STORAGE_PATH>'
 
 If using Swift backend:
  - use_swift: 'true'
