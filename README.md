@@ -48,6 +48,9 @@ Required:
  - storage_local_path: '<STORAGE_LOCAL_PATH>'
  - quay_container_storage_path: '<QUAY_CONTAINER_STORAGE_PATH>'
 
+Optional:
+ - podman_authfile: '<PODMAN_AUTHFILE>'
+
 If using Swift backend:
  - use_swift: 'true'
  - storage_swift_auth_url: '<SWIFT_AUTH_URL>'

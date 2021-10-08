@@ -21,7 +21,7 @@
   become: true
 
 - name: Pull Quay image
-  command: /usr/bin/podman pull {{ quay_image }}
+  command: /usr/bin/podman pull  {%if podman_authfile %} --authfile={{ podman_authfile }} {% endif %} {{ quay_image }}
   become: true
 
 - name: Launch dci-quay service
