@@ -1,4 +1,11 @@
 ---
+- name: Creat Quay container storage directory
+  file:
+    path: "{{ quay_container_storage_path }}"
+    state: directory
+    mode: '0755'
+  become: true
+
 - name: Create Quay config directory
   file:
     path: "{{ quay_config_path }}"
