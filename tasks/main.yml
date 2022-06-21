@@ -1,5 +1,5 @@
 ---
-- name: Creat Quay container storage directory
+- name: Create Quay container storage directory
   file:
     path: "{{ quay_container_storage_path }}"
     state: directory
