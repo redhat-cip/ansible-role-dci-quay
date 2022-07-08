@@ -63,3 +63,22 @@ If using Swift backend:
 
 If using TLS:
  - use_tls: 'true'
+ - dci_tls_org: defaults to 'Telco CI"
+ - host_fqdn: host name for the Quay service.
+
+## Notes on TLS usage
+
+When TLS is enabled (use_tls: true), the role creates an ad-hoc self-signed cetificate and makes it available both to:
+
+- The Quay instance: by placing it, along with the private key, under the {{ quay_config_path }} directory.
+- The ansible controller (jumpbox): by placing it in the local CA trust source directory and updating the trusted CA database.
+
+When creating the certificate, the role uses the variable *host_fqdn* as the common name. You must set it to a FQDN and set the appropriate DNS records in place so all the systems involved in the platform will be able to reach the registry.
+
+If you have a certificate of your own you rather use, you may replace the files *ssl.cert* and *ssl.key* in the quay config path and restart the Quay service:
+
+```
+$ sudo systemctl restart dci-quay
+```
+
+

@@ -1,8 +1,10 @@
 ---
+
 - name: Create Quay container storage directory
   file:
     path: "{{ quay_container_storage_path }}"
     state: directory
+    owner: 1001
     mode: '0755'
   become: true
 
@@ -19,6 +21,61 @@
     dest: "{{ quay_config_path }}/config.yaml"
     mode: '0644'
   become: true
+
+- when: use_tls | default(False) | bool
+  block:
+    - name: Check the Quay host name is resolvable
+      lineinfile:
+        dest: /etc/hosts
+        line: '{{ host_public_ip }} {{ host_fqdn }}'
+        regexp: ^.* {{ host_fqdn }}.*$
+
+    - name: "Generate private keys"
+      openssl_privatekey:
+        path: "{{ quay_config_path }}/ssl.key"
+        size: 4096
+
+    - name: "Generate CSR"
+      openssl_csr:
+        path: "{{ quay_config_path }}/ssl.csr"
+        privatekey_path: "{{ quay_config_path }}/ssl.key"
+        organization_name: "{{ dci_tls_org | default('Telco CI') }}"
+        common_name: "{{ host_fqdn }}"
+        #basic_constraints:
+          #- CA:true
+        key_usage_critical: yes
+        key_usage:
+          - digitalSignature
+          - nonRepudiation
+          - keyEncipherment
+          - keyCertSign
+        subject_alt_name:
+          - "DNS:{{ host_fqdn }}"
+          - "IP:{{ host_public_ip }}"
+
+    - name: "Generate a Self Signed OpenSSL CA certificate"
+      openssl_certificate:
+        path: "{{ quay_config_path }}/ssl.cert"
+        privatekey_path: "{{ quay_config_path }}/ssl.key"
+        csr_path: "{{ quay_config_path }}/ssl.csr"
+        provider: selfsigned
+
+    - name: Check on the TLS artifact permissions
+      file:
+        path: "{{ quay_config_path }}/{{ item }}"
+        mode: 0644
+      loop:
+        - ssl.key
+        - ssl.cert
+
+    - name: Copy certificate to CA trust source directory
+      copy:
+        src: "{{ quay_config_path }}/ssl.cert"
+        dest: /etc/pki/ca-trust/source/anchors
+        remote_src: yes
+
+    - name: Update CA trust
+      shell: update-ca-trust
 
 - name: Create Quay settings file
   template:
