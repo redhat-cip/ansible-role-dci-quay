@@ -88,6 +88,25 @@
   command: /usr/bin/podman pull  {%if podman_authfile %} --authfile={{ podman_authfile }} {% endif %} {{ quay_image }}
   become: true
 
+- name: Install change Quay user password script
+  copy:
+    src: change_passwd_quay_user.py
+    dest: /usr/local/bin/change_passwd_quay_user.py
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Install dependencies required for setting Quay user password
+  package:
+    name:
+      - 'python3dist(psycopg2)'
+      - 'python3dist(bcrypt)'
+    state: latest
+
+- name: Set Quay admin password
+  script:
+    cmd: /usr/local/bin/change_passwd_quay_user.py --dburi {{ postgres_database_uri }} --password {{ quay_admin_password }}
+
 - name: Launch dci-quay service
   systemd:
     name: dci-quay
